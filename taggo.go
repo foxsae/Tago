@@ -1,14 +1,15 @@
 /*
-* Tao version 0.1 "Emacs etags for Go"
-* Author: Alex Combas
-* Website: www.goplexian.com
-* Email: alex.combas@gmail.com
-*
-*
-* Copyright: Alex Combas 2010
-* License: GNU GPL
-* Initial release: January 03 2010
-*
+
+ Taggo version 0.1 "Emacs etags for Go"
+ Author: Alex Combas
+ Website: www.goplexian.com
+ Email: alex.combas@gmail.com
+
+
+ Copyright: Alex Combas 2010
+ License: GNU GPL
+ Initial release: January 03 2010
+
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -24,38 +25,29 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-*
-* COMPILING:
-*
-* $> cd tao-0.1
-* $> make 
-* $> cp tao /path/to/bin
-* $> make clean
-*
-*
-*
-* USAGE: 
-*
-* tao *.go 
-* tao fileX.go fileY.go fileZ.go
-*
-* Tao will write a TAGS file to your present working directory.
-*
-* WARNING: If a TAGS file exists in the pwd then it will be overwritten.
-*
-* To add the TAGS file to Emacs: M+x visit-tags-table RET /path/to/TAGS RET yes
-*
-*
-*
-* TODO:
-*
-* Add flag support: 
-* -a append to TAGS file, 
-* -f specify TAGS location, 
-* -h print help, 
-* etc
-*
-*
+
+ COMPILING:
+ $> cd taggo-0.1
+ $> make 
+ $> cp taggo /path/to/bin
+ $> make clean
+
+
+ USAGE: 
+ $> taggo *.go 
+ $> taggo fileX.go fileY.go fileZ.go
+ Tao will write a TAGS file to your present working directory.
+ WARNING: If a TAGS file exists in the pwd then it will be overwritten.
+ To add the TAGS file to Emacs: M+x visit-tags-table RET /path/to/TAGS RET yes
+
+
+ TODO:
+ Add flag support: 
+ -a append to TAGS file, 
+ -f specify TAGS location, 
+ -h print help, 
+ etc
+
 */
 
 package main

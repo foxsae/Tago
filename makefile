@@ -1,7 +1,7 @@
-tao: tao.6
-	6l -o tao tao.6
+tao: taggo.6
+	6l -o taggo taggo.6
 tao.6: 
-	6g tao.go
+	6g taggo.go
 clean:
-	rm tao tao.6
+	rm taggo taggo.6
 .PHONY: clean
