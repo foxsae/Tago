@@ -7,62 +7,9 @@
  
  Copyright: Alex Combas 2010
  Initial release: January 03 2010
+ LICENSE: GNU GPL
 
- 
- LICENSE:
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
- 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- 
- 
- COMPILING:
- $> git clone git://github.com/AlexCombas/Taggo.git
- $> cd Taggo
- $> make 
- $> cp taggo /path/to/bin
- $> make clean
- 
- 
- USAGE: 
- $> taggo *.go 
- $> taggo fileX.go fileY.go fileZ.go
- $> taggo -a -d=/path/to/my/tags/ -n=MyTagsFile taggo.go
-
- By default Taggo will write a TAGS file to your present working directory.
- Taggo will not overwrite an existing TAGS file.
-
-
- FLAGS:
- -n Change TAGS name, default is TAGS
- eg. -n=MyTagsFile
-
- -d Change save directory, default is present working directory "./"
- eg. -d=/path/to/my/tags/
-
- -a Append mode, add to an existing TAGS file
- eg. -a
-
-
- EMACS:
- To add the TAGS file to Emacs: 
- <M+x> visit-tags-table <RET> /path/TAGS <RET> yes
- 
- 
- TODO:
- Add more flag support: 
- -o Overwrite mode 
- -l Print license info 
- -h Print help info
+ See README for usage, compiling, and other info.
  
  */
 
@@ -79,7 +26,7 @@ import (
 )
 
 // Get working directory and set it for savePath flag default
-func wd() string {
+func whereAmI() string {
 	dir, err := os.Getwd()
 	if err != nil {
 		fmt.Printf("Error getting working directory: %s\n", err.String())
@@ -90,7 +37,7 @@ func wd() string {
 }
 
 // Setup flag variables
-var saveDir = flag.String("d", wd(), "Change save directory: -d=/path/to/my/tags/")
+var saveDir = flag.String("d", whereAmI(), "Change save directory: -d=/path/to/my/tags/")
 var tagsName = flag.String("n", "TAGS", "Change TAGS name: -n=MyTagsFile")
 var appendMode = flag.Bool("a", false, "Append mode: -a")
 
@@ -110,7 +57,7 @@ func (t *Tea) drink(leaf *ast.Ident) {
 }
 
 // TAGS file is either appended or created, not overwritten.
-func (t *Tea) save() {
+func (t *Tea) savor() {
 	location := fmt.Sprintf("%s%s", *saveDir, *tagsName)
 	if *appendMode {
 		file, err := os.Open(location, os.O_APPEND|os.O_WRONLY, 0666)
@@ -159,9 +106,9 @@ func scoop(name string, n int) []byte {
 
 // Parses the source files given on the commandline, returns a TAGS chunk for each file
 func brew() string {
-	tea := new(Tea)
+	teaPot := new(Tea)
 	for i := 0 ; i < len(flag.Args()) ; i++ {
-		teaPot := new(Tea)
+		teaCup := new(Tea)
 		ptree, perr := parser.ParseFile(flag.Arg(i), nil, 0)
 
 		// return an empty string if there are any parsing errors.
@@ -174,24 +121,24 @@ func brew() string {
 		for _, l := range ptree.Decls {
 			switch leaf := l.(type) {
 			case *ast.FuncDecl:
-				teaPot.drink(leaf.Name)
+				teaCup.drink(leaf.Name)
 			case *ast.GenDecl:
 				for _, c := range leaf.Specs {
 					switch cell := c.(type) {
 					case *ast.TypeSpec:
-						teaPot.drink(cell.Name)
+						teaCup.drink(cell.Name)
 					case *ast.ValueSpec:
 						for _, atom := range cell.Names {
-							teaPot.drink(atom)
+							teaCup.drink(atom)
 						}
 					}
 				}
 			}
 		}
-		totalBytes := teaPot.bag.Len()
-		fmt.Fprintf(tea, "\n%s,%d\n%s", ptree.Position.Filename, totalBytes, teaPot)
+		totalBytes := teaCup.bag.Len()
+		fmt.Fprintf(teaPot, "\n%s,%d\n%s", ptree.Position.Filename, totalBytes, teaCup)
 	}
-	return tea.String()
+	return teaPot.String()
 }
 
 func main() {
@@ -199,10 +146,10 @@ func main() {
 	tea := new(Tea)
 	fmt.Fprint(tea, brew())
 	
-	// if the string is empty there were parsing errors, so do not save anything.
+	// if the string is empty there were parsing errors, abort
 	if tea.String() == "" {
 		fmt.Println("Parsing errors experienced, aborting...")
 	} else {
-		tea.save()
+		tea.savor()
 	}
 }	
