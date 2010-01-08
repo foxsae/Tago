@@ -1,32 +1,65 @@
+ 
  Taggo version 0.1 "Emacs etags for Go"
  Author: Alex Combas
  Website: www.goplexian.com
  Email: alex.combas@gmail.com
-
-
+ 
  Copyright: Alex Combas 2010
- License: GNU GPL
  Initial release: January 03 2010
 
-
+ 
+ LICENSE:
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ 
+ 
  COMPILING:
- $> cd tao-0.1
+ $> git clone git://github.com/AlexCombas/Taggo.git
+ $> cd Taggo
  $> make 
- $> cp tao /path/to/bin
+ $> cp taggo /path/to/bin
  $> make clean
-
-
+ 
+ 
  USAGE: 
- $> tao *.go 
- $> tao fileX.go fileY.go fileZ.go
- Tao will write a TAGS file to your present working directory.
- WARNING: If a TAGS file exists in the pwd then it will be overwritten.
- To add the TAGS file to Emacs: M+x visit-tags-table RET /path/to/TAGS RET yes
+ $> taggo *.go 
+ $> taggo fileX.go fileY.go fileZ.go
+ $> taggo -a -d=/path/to/my/tags/ -n=MyTagsFile taggo.go
+
+ By default Taggo will write a TAGS file to your present working directory.
+ Taggo will not overwrite an existing TAGS file.
 
 
+ FLAGS:
+ -n Change TAGS name, default is TAGS
+ eg. -n=MyTagsFile
+
+ -d Change save directory, default is present working directory "./"
+ eg. -d=/path/to/my/tags/
+
+ -a Append mode, add to an existing TAGS file
+ eg. -a
+
+
+ EMACS:
+ To add the TAGS file to Emacs: 
+ <M+x> visit-tags-table <RET> /path/TAGS <RET> yes
+ 
+ 
  TODO:
- Add flag support: 
- -a append to TAGS file, 
- -l specify TAGS location, 
- -h print help, 
- etc
+ Add more flag support: 
+ -o Overwrite mode 
+ -l Print license info 
+ -h Print help info
+ 

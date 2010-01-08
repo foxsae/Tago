@@ -5,12 +5,11 @@
  Website: www.goplexian.com
  Email: alex.combas@gmail.com
  
- 
  Copyright: Alex Combas 2010
- License: GNU GPL
  Initial release: January 03 2010
+
  
- 
+ LICENSE:
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
  as published by the Free Software Foundation; either version 2
@@ -27,7 +26,8 @@
  
  
  COMPILING:
- $> cd taggo-0.1
+ $> git clone git://github.com/AlexCombas/Taggo.git
+ $> cd Taggo
  $> make 
  $> cp taggo /path/to/bin
  $> make clean
@@ -36,17 +36,33 @@
  USAGE: 
  $> taggo *.go 
  $> taggo fileX.go fileY.go fileZ.go
- Tao will write a TAGS file to your present working directory.
- WARNING: If a TAGS file exists in the pwd then it will be overwritten.
- To add the TAGS file to Emacs: M+x visit-tags-table RET /path/to/TAGS RET yes
+ $> taggo -a -d=/path/to/my/tags/ -n=MyTagsFile taggo.go
+
+ By default Taggo will write a TAGS file to your present working directory.
+ Taggo will not overwrite an existing TAGS file.
+
+
+ FLAGS:
+ -n Change TAGS name, default is TAGS
+ eg. -n=MyTagsFile
+
+ -d Change save directory, default is present working directory "./"
+ eg. -d=/path/to/my/tags/
+
+ -a Append mode, add to an existing TAGS file
+ eg. -a
+
+
+ EMACS:
+ To add the TAGS file to Emacs: 
+ <M+x> visit-tags-table <RET> /path/TAGS <RET> yes
  
  
  TODO:
- Add flag support: 
- -a append to TAGS file, 
- -f specify TAGS location, 
- -h print help, 
- etc
+ Add more flag support: 
+ -o Overwrite mode 
+ -l Print license info 
+ -h Print help info
  
  */
 
@@ -62,7 +78,6 @@ import (
 	"os"
 )
 
-// Setup flag
 // Get working directory and set it for savePath flag default
 func wd() string {
 	dir, err := os.Getwd()
@@ -75,9 +90,9 @@ func wd() string {
 }
 
 // Setup flag variables
-var savePath = flag.String("p", wd(), "Change save path: -l=/new/save/path/")
-var tagsName = flag.String("n", "TAGS", "Change TAGS name: -n=myTAGS")
-var appendMode = flag.Bool("a", false, "Enable append mode: -a, -a=t, -a=true")
+var saveDir = flag.String("d", wd(), "Change save directory: -d=/path/to/my/tags/")
+var tagsName = flag.String("n", "TAGS", "Change TAGS name: -n=MyTagsFile")
+var appendMode = flag.Bool("a", false, "Append mode: -a")
 
 type Tea struct { bag bytes.Buffer }
 
@@ -94,9 +109,9 @@ func (t *Tea) drink(leaf *ast.Ident) {
 	fmt.Fprintf(t, "%s%s%d,%d\n", s, leaf.Value, leaf.Position.Line, leaf.Position.Offset)
 }
 
-// TAGS file is written to the working directory, it is either created or overwritten
+// TAGS file is either appended or created, not overwritten.
 func (t *Tea) save() {
-	location := fmt.Sprintf("%s%s", *savePath, *tagsName)
+	location := fmt.Sprintf("%s%s", *saveDir, *tagsName)
 	if *appendMode {
 		file, err := os.Open(location, os.O_APPEND|os.O_WRONLY, 0666)
 		if err != nil {
@@ -111,6 +126,7 @@ func (t *Tea) save() {
 		file, err := os.Open(location, os.O_CREATE|os.O_WRONLY|os.O_EXCL, 0666)
 		if err != nil {
 			fmt.Printf("Error writing file \"%s\": %s\n",location, err.String())
+			fmt.Println("Hint: taggo will not overwrite an existing tagsfile, only create or append.")
 		} else {
 
 			file.WriteString(t.bag.String())
@@ -185,8 +201,8 @@ func main() {
 	
 	// if the string is empty there were parsing errors, so do not save anything.
 	if tea.String() == "" {
-		fmt.Println("Parsing errors experienced, aborting write.")
-	} else
+		fmt.Println("Parsing errors experienced, aborting...")
+	} else {
 		tea.save()
 	}
 }	
