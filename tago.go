@@ -1,6 +1,6 @@
 /*
  
- Taggo version 0.1 "Emacs etags for Go"
+ Tago version 0.1 "Emacs etags for Go"
  Author: Alex Combas
  Website: www.goplexian.com
  Email: alex.combas@gmail.com
@@ -14,6 +14,7 @@
  */
 
 package main
+
 
 import (
 	"go/parser"
@@ -62,7 +63,7 @@ func (t *Tea) savor() {
 	if *appendMode {
 		file, err := os.Open(location, os.O_APPEND|os.O_WRONLY, 0666)
 		if err != nil {
-			fmt.Printf("Error appending file \"%s\": %s", location, err.String())
+			fmt.Printf("Error appending file \"%s\": %s\n", location, err.String())
 		} else {
 			b := t.bag.Len()
 			file.WriteAt(t.bag.Bytes(), int64(b))
@@ -73,7 +74,7 @@ func (t *Tea) savor() {
 		file, err := os.Open(location, os.O_CREATE|os.O_WRONLY|os.O_EXCL, 0666)
 		if err != nil {
 			fmt.Printf("Error writing file \"%s\": %s\n",location, err.String())
-			fmt.Println("Hint: taggo will not overwrite an existing tagsfile, only create or append.")
+			fmt.Println("Hint: tago will not overwrite an existing tagsfile, only create or append.")
 		} else {
 
 			file.WriteString(t.bag.String())

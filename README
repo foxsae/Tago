@@ -1,10 +1,11 @@
  
- Taggo version 0.1 "Emacs etags for Go"
+ Tago: "Emacs TAGS for Go"
  Author: Alex Combas
  Website: www.goplexian.com
  Email: alex.combas@gmail.com
  
- Copyright: Alex Combas 2010
+ Version: 0.1
+ Copyright: 2010 (C) Alex Combas
  Initial release: January 03 2010
 
  
@@ -25,20 +26,21 @@
  
  
  COMPILING:
- $> git clone git://github.com/AlexCombas/Taggo.git
- $> cd Taggo
+ $> git clone git://github.com/AlexCombas/Tago.git
+ $> cd Tago
  $> make 
- $> cp taggo /path/to/bin
+ $> cp tago /path/to/bin
  $> make clean
  
  
  USAGE: 
- $> taggo *.go 
- $> taggo fileX.go fileY.go fileZ.go
- $> taggo -a -d=/path/to/my/tags/ -n=MyTagsFile taggo.go
+ $> tago *.go 
+ $> tago fileX.go fileY.go fileZ.go
+ $> tago -a -d=/path/to/my/tags/ -n=MyTagsFile taggo.go
+ $> find /path/package -name *.go | xargs tago 
 
- By default Taggo will write a TAGS file to your present working directory.
- Taggo will not overwrite an existing TAGS file.
+ By default Tago will write a TAGS file to your present working directory.
+ Tago will not overwrite an existing TAGS file (at this time).
 
 
  FLAGS:
@@ -55,7 +57,12 @@
  EMACS:
  To add the TAGS file to Emacs: 
  <M+x> visit-tags-table <RET> /path/TAGS <RET> yes
- 
+
+ Complete-Tag:
+ <M+TAB> 
+
+ Find-Tag:
+ <M+.> 
  
  TODO:
  Add more flag support: 
