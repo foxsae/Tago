@@ -40,7 +40,9 @@
  $> find /path/package -name *.go | xargs tago 
 
  By default Tago will write a TAGS file to your present working directory.
- Tago will not overwrite an existing TAGS file (at this time).
+
+ Tago will overwrite an existing TAGS file unless the -a flag is used in 
+ which case it will append to an existing TAGS file. 
 
 
  FLAGS:
