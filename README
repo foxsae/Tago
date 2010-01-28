@@ -4,7 +4,7 @@
  Website: www.goplexian.com
  Email: alex.combas@gmail.com
  
- Version: 0.1
+ Version: 0.2
  © Alex Combas 2010 
  Initial release: January 03 2010
 
@@ -63,10 +63,4 @@
 
  Find-Tag:
  <M+.> 
- 
- TODO:
- Add more flag support: 
- -o Overwrite mode 
- -l Print license info 
- -h Print help info
  

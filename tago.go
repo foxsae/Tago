@@ -1,13 +1,13 @@
 /*
 
- Tago version 0.1 "Emacs etags for Go"
+ Tago "Emacs etags for Go"
  Author: Alex Combas
  Website: www.goplexian.com
  Email: alex.combas@gmail.com
 
- Copyright: Alex Combas 2010
+ Version: 0.2
+ © Alex Combas 2010
  Initial release: January 03 2010
- LICENSE: GNU GPL
 
  See README for usage, compiling, and other info.
 
@@ -55,7 +55,7 @@ func (t *Tea) Write(p []byte) (n int, err os.Error) {
 // Writes a TAGS line to a Tea buffer
 func (t *Tea) drink(leaf *ast.Ident) {
 	s := scoop(leaf.Position.Filename, leaf.Position.Line)
-	fmt.Fprintf(t, "%s%s%d,%d\n", s, leaf.Value, leaf.Position.Line, leaf.Position.Offset)
+	fmt.Fprintf(t, "%s%s%d,%d\n", s, leaf.Obj.Name, leaf.Position.Line, leaf.Position.Offset)
 }
 
 // TAGS file is either appended or created, not overwritten.
@@ -106,7 +106,7 @@ func brew() string {
 	teaPot := new(Tea)
 	for i := 0; i < len(flag.Args()); i++ {
 		teaCup := new(Tea)
-		if ptree, perr := parser.ParseFile(flag.Arg(i), nil, 0); perr != nil {
+		if ptree, perr := parser.ParseFile(flag.Arg(i), nil, nil, 0); perr != nil {
 			fmt.Println("Error parsing file: ", perr.String())
 			return ""
 		} else {
