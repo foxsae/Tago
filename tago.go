@@ -129,7 +129,7 @@ func brew() string {
 				}
 			}
 			totalBytes := teaCup.bag.Len()
-			fmt.Fprintf(teaPot, "\n%s,%d\n%s", ptree.Position.Filename, totalBytes, teaCup)
+			fmt.Fprintf(teaPot, "\f\n%s,%d\n%s", ptree.Position.Filename, totalBytes, teaCup)
 		}
 	}
 	return teaPot.String()
