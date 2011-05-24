@@ -18,6 +18,7 @@ package main
 import (
 	"go/parser"
 	"go/ast"
+	"go/token"
 	"bufio"
 	"bytes"
 	"flag"
@@ -53,16 +54,20 @@ func (t *Tea) Write(p []byte) (n int, err os.Error) {
 }
 
 // Writes a TAGS line to a Tea buffer
-func (t *Tea) drink(leaf *ast.Ident) {
-	s := scoop(leaf.Position.Filename, leaf.Position.Line)
-	fmt.Fprintf(t, "%s%s%d,%d\n", s, leaf.Obj.Name, leaf.Position.Line, leaf.Position.Offset)
+func (t *Tea) drink(leaf *ast.Ident, fileSet *token.FileSet) {
+	if leaf.Obj == nil {
+		return
+	}
+	position := fileSet.Position(leaf.Pos())
+	s := scoop(position.Filename, position.Line)
+	fmt.Fprintf(t, "%s%s%d,%d\n", s, leaf.Obj.Name, position.Line, position.Offset)
 }
 
 // TAGS file is either appended or created, not overwritten.
 func (t *Tea) savor() {
 	location := fmt.Sprintf("%s%s", *saveDir, *tagsName)
 	if *appendMode {
-		if file, err := os.Open(location, os.O_APPEND|os.O_WRONLY, 0666); err != nil {
+		if file, err := os.OpenFile(location, os.O_APPEND|os.O_WRONLY, 0666); err != nil {
 			fmt.Printf("Error appending file \"%s\": %s\n", location, err.String())
 		} else {
 			b := t.bag.Len()
@@ -70,7 +75,7 @@ func (t *Tea) savor() {
 			file.Close()
 		}
 	} else {
-		if file, err := os.Open(location, os.O_CREATE|os.O_WRONLY, 0666); err != nil {
+		if file, err := os.OpenFile(location, os.O_CREATE|os.O_WRONLY, 0666); err != nil {
 			fmt.Printf("Error writing file \"%s\": %s\n", location, err.String())
 		} else {
 			file.WriteString(t.bag.String())
@@ -83,7 +88,7 @@ func (t *Tea) savor() {
 func scoop(name string, n int) []byte {
 	var newline byte = '\n'
 	var line []byte // holds a line of source code
-	if file, err := os.Open(name, os.O_RDONLY, 0666); err != nil {
+	if file, err := os.OpenFile(name, os.O_RDONLY, 0666); err != nil {
 		fmt.Printf("Error opening file: %s\n", err.String())
 	} else {
 		r := bufio.NewReader(file)
@@ -104,9 +109,10 @@ func scoop(name string, n int) []byte {
 // Parses the source files given on the commandline, returns a TAGS chunk for each file
 func brew() string {
 	teaPot := new(Tea)
+	fileSet := token.NewFileSet()
 	for i := 0; i < len(flag.Args()); i++ {
 		teaCup := new(Tea)
-		if ptree, perr := parser.ParseFile(flag.Arg(i), nil, nil, 0); perr != nil {
+		if ptree, perr := parser.ParseFile(fileSet, flag.Arg(i), nil, 0); perr != nil {
 			fmt.Println("Error parsing file: ", perr.String())
 			return ""
 		} else {
@@ -114,22 +120,23 @@ func brew() string {
 			for _, l := range ptree.Decls {
 				switch leaf := l.(type) {
 				case *ast.FuncDecl:
-					teaCup.drink(leaf.Name)
+					teaCup.drink(leaf.Name, fileSet)
 				case *ast.GenDecl:
 					for _, c := range leaf.Specs {
 						switch cell := c.(type) {
 						case *ast.TypeSpec:
-							teaCup.drink(cell.Name)
+							teaCup.drink(cell.Name, fileSet)
 						case *ast.ValueSpec:
 							for _, atom := range cell.Names {
-								teaCup.drink(atom)
+								teaCup.drink(atom, fileSet)
 							}
 						}
 					}
 				}
 			}
 			totalBytes := teaCup.bag.Len()
-			fmt.Fprintf(teaPot, "\f\n%s,%d\n%s", ptree.Position.Filename, totalBytes, teaCup)
+			position := fileSet.Position(ptree.Pos())
+			fmt.Fprintf(teaPot, "\f\n%s,%d\n%s", position.Filename, totalBytes, teaCup)
 		}
 	}
 	return teaPot.String()
