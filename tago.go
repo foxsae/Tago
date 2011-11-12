@@ -16,13 +16,13 @@
 package main
 
 import (
-	"go/parser"
-	"go/ast"
-	"go/token"
 	"bufio"
 	"bytes"
 	"flag"
 	"fmt"
+	"go/ast"
+	"go/parser"
+	"go/token"
 	"os"
 )
 
@@ -30,7 +30,7 @@ import (
 func whereAmI() string {
 	var r string = ""
 	if dir, err := os.Getwd(); err != nil {
-		fmt.Printf("Error getting working directory: %s\n", err.String())
+		fmt.Printf("Error getting working directory: %s\n", err.Error())
 	} else {
 		r = dir + "/"
 	}
@@ -48,7 +48,7 @@ type Tea struct {
 
 func (t *Tea) String() string { return t.bag.String() }
 
-func (t *Tea) Write(p []byte) (n int, err os.Error) {
+func (t *Tea) Write(p []byte) (n int, err error) {
 	t.bag.Write(p)
 	return len(p), nil
 }
@@ -68,7 +68,7 @@ func (t *Tea) savor() {
 	location := fmt.Sprintf("%s%s", *saveDir, *tagsName)
 	if *appendMode {
 		if file, err := os.OpenFile(location, os.O_APPEND|os.O_WRONLY, 0666); err != nil {
-			fmt.Printf("Error appending file \"%s\": %s\n", location, err.String())
+			fmt.Printf("Error appending file \"%s\": %s\n", location, err.Error())
 		} else {
 			b := t.bag.Len()
 			file.WriteAt(t.bag.Bytes(), int64(b))
@@ -76,7 +76,7 @@ func (t *Tea) savor() {
 		}
 	} else {
 		if file, err := os.OpenFile(location, os.O_CREATE|os.O_WRONLY, 0666); err != nil {
-			fmt.Printf("Error writing file \"%s\": %s\n", location, err.String())
+			fmt.Printf("Error writing file \"%s\": %s\n", location, err.Error())
 		} else {
 			file.WriteString(t.bag.String())
 			file.Close()
@@ -89,14 +89,14 @@ func scoop(name string, n int) []byte {
 	var newline byte = '\n'
 	var line []byte // holds a line of source code
 	if file, err := os.OpenFile(name, os.O_RDONLY, 0666); err != nil {
-		fmt.Printf("Error opening file: %s\n", err.String())
+		fmt.Printf("Error opening file: %s\n", err.Error())
 	} else {
 		r := bufio.NewReader(file)
-		
+
 		// iterate until reaching line #n
 		for i := 1; i <= n; i++ {
 			if sought, err := r.ReadBytes(newline); err != nil {
-				fmt.Printf("Error reading bytes: %s\n", err.String())
+				fmt.Printf("Error reading bytes: %s\n", err.Error())
 			} else {
 				line = sought[0:(len(sought) - 1)] //strip the newline
 			}
@@ -113,7 +113,7 @@ func brew() string {
 	for i := 0; i < len(flag.Args()); i++ {
 		teaCup := new(Tea)
 		if ptree, perr := parser.ParseFile(fileSet, flag.Arg(i), nil, 0); perr != nil {
-			fmt.Println("Error parsing file: ", perr.String())
+			fmt.Println("Error parsing file: ", perr.Error())
 			return ""
 		} else {
 			// if there were no parsing errors then process normally
